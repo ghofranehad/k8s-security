@@ -1,0 +1,61 @@
+# =============================================================================
+# Kind Cluster Configuration — k8s-security-hardening
+# =============================================================================
+#
+# PURPOSE:
+#   Creates a 3-node Kind cluster (1 control-plane + 2 workers) with the
+#   default CNI disabled so Calico can be installed instead.
+#
+# WHY CALICO INSTEAD OF THE DEFAULT CNI (kindnet):
+#   Kind's default CNI (kindnet) does NOT enforce NetworkPolicy objects.
+#   A NetworkPolicy applied to a kindnet cluster is silently accepted by the
+#   API server but never enforced — pods remain fully reachable.
+#   Calico replaces kindnet and provides real NetworkPolicy enforcement,
+#   which is required for Layer 4 (zero-trust network segmentation).
+#
+# NOTE ON KUBEADM HARDENING:
+#   API server flags like anonymous-auth=false and kubelet webhook
+#   authorization are intentionally NOT set here. During kubeadm join,
+#   worker nodes perform anonymous preflight health checks (/healthz) against
+#   the API server. Disabling anonymous auth at bootstrap causes join to fail
+#   with a 401. These settings are documented in docs/adr/ADR-001-cluster-setup.md
+#   as production recommendations that require a managed cluster (EKS/GKE/RKE2).
+#
+# ATTACK VECTOR ADDRESSED:
+#   MITRE ATT&CK T1021 — Lateral Movement via open pod-to-pod network.
+#   Without Calico, any compromised pod can reach any other pod in the cluster.
+#
+# CIS BENCHMARK: Section 5.3 — Network Policies and CNI
+# =============================================================================
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+name: k8s-security-hardening
+
+networking:
+  # Disable default CNI (kindnet) — required to install Calico.
+  disableDefaultCNI: true
+
+  # Pod CIDR — matches Calico's default and avoids overlap with WSL2 host network.
+  podSubnet: "192.168.0.0/16"
+
+  serviceSubnet: "10.96.0.0/12"
+
+nodes:
+  - role: control-plane
+    # Port mappings allow reaching NodePort services from the Windows host via localhost.
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 30080
+        protocol: TCP
+      - containerPort: 30443
+        hostPort: 30443
+        protocol: TCP
+      - containerPort: 30090
+        hostPort: 30090
+        protocol: TCP
+
+  - role: worker
+
+  - role: worker

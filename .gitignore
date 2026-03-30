@@ -1,0 +1,52 @@
+# Secrets — never commit these
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+*.env
+.env.*
+secrets/
+*secret*.yaml
+*secret*.json
+
+# Sealed Secrets public cert (safe to commit, but generated locally)
+# pub-cert.pem — uncomment to exclude
+
+# Kubeconfig files — contain cluster credentials
+kubeconfig
+*.kubeconfig
+.kube/
+
+# Trivy cache
+.trivy/
+trivy-results/
+
+# Generated reports — these are built artifacts, not source
+dashboard/security-report.html
+audit-results/
+*.report.json
+
+# Claude Code instruction file — not part of the project
+claude.md
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Terraform (if added later)
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
