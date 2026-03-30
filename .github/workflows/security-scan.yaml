@@ -49,17 +49,17 @@ jobs:
           sarif_file: 'trivy-man-results.sarif'
           category: trivy-manifest
       - name: scan-image-enforce
-         id: scan-image-enforce
-         uses: aquasecurity/trivy-action@0.35.0
-         with:
+        id: scan-image-enforce
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
            image-ref: 'falcosecurity/falco'
            format: 'table'
            severity: 'HIGH,CRITICAL'
            exit-code: '1'
       - name: scan-manifest-enforce
-         id: scan-man-enforce
-         uses: aquasecurity/trivy-action@0.35.0
-         with:
+        id: scan-man-enforce
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
            scan-type: 'config'
            hide-progress: true
            severity: 'HIGH,CRITICAL'
