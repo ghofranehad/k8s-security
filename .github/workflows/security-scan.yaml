@@ -1,0 +1,41 @@
+name: security-scan
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read          # Required to checkout and read repo files
+      security-events: write  # Required to upload SARIF files to Security tab
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: scan-image
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: 'falcosecurity/falco'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+      - name: Upload Trivy scan image
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-results.sarif'
+      - name: scan-manifest
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: 'config'
+          hide-progress: true
+          format: 'sarif'
+          output: 'trivy-man-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan image
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-man-results.sarif'
