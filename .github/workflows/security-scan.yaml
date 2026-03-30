@@ -23,8 +23,8 @@ jobs:
           image-ref: 'falcosecurity/falco'
           format: 'sarif'
           output: 'trivy-results.sarif'
-          severity: 'HIGH,CRITICAL'
-          exit-code: '1'
+        #  severity: 'HIGH,CRITICAL'
+        #  exit-code: '1'
       - name: scan-manifest
         id: scan-manifest
         uses: aquasecurity/trivy-action@0.35.0
@@ -48,8 +48,7 @@ jobs:
         with:
           sarif_file: 'trivy-man-results.sarif'
           category: trivy-manifest
-      
-       - name: scan-image-enforce
+      - name: scan-image-enforce
          id: scan-image-enforce
          uses: aquasecurity/trivy-action@0.35.0
          with:
@@ -57,7 +56,7 @@ jobs:
            format: 'table'
            severity: 'HIGH,CRITICAL'
            exit-code: '1'
-       - name: scan-manifest-enforce
+      - name: scan-manifest-enforce
          id: scan-man-enforce
          uses: aquasecurity/trivy-action@0.35.0
          with:
