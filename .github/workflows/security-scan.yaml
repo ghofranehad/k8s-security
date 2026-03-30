@@ -49,6 +49,5 @@ jobs:
           sarif_file: 'trivy-man-results.sarif'
           category: trivy-manifest
       - name: Fail pipeline if vulnerabilities found  # ← now block the job
-        if: steps.scan-image.outcome == 'failure' || steps.scan-manifest.outcome
-   == 'failure'
+        if: steps.scan-image.outcome == 'failure' || steps.scan-manifest.outcome== 'failure'
         run: exit 1
