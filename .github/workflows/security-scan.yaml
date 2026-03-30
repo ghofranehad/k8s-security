@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: scan-image
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'falcosecurity/falco'
           format: 'sarif'
@@ -27,7 +27,7 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
       - name: scan-manifest
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
           hide-progress: true
