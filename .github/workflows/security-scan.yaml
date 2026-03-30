@@ -31,7 +31,11 @@ jobs:
           output: 'trivy-man-results.sarif'
           severity: 'CRITICAL,HIGH'
 
-      - name: Upload Trivy report
+      - name: Upload Trivy report scan image
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: 'trivy-results.sarif,trivy-man-results.sarif'
+          sarif_file: 'trivy-results.sarif'
+      - name: Upload Trivy report scan manifest
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-man-results.sarif'
