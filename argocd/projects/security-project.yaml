@@ -1,0 +1,70 @@
+# =============================================================================
+# ArgoCD AppProject — security-hardening
+# =============================================================================
+#
+# PURPOSE:
+#   Scopes ArgoCD permissions for all security layer deployments.
+#   Without an AppProject, ArgoCD uses the 'default' project which allows
+#   deploying to ANY namespace from ANY source repo — a serious misconfiguration
+#   in a security-focused cluster.
+#
+# WHAT THIS ENFORCES:
+#   - Only this GitHub repo can be used as a source
+#   - Only the listed namespaces can be deployed to
+#   - Prevents ArgoCD from being used to backdoor kube-system or default NS
+#
+# ATTACK VECTOR PREVENTED:
+#   MITRE ATT&CK T1072 — Software Deployment Tools abuse.
+#   A compromised ArgoCD without project scoping could deploy malicious
+#   workloads to any namespace, including kube-system.
+# =============================================================================
+
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: security-hardening
+  namespace: argocd
+  # Finalizer ensures the project cannot be deleted while apps still reference it
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: "Security hardening layers — Kyverno, Falco, Sealed Secrets, NetworkPolicies"
+
+  # Only this repo is a valid source — no other repo can deploy via this project
+  sourceRepos:
+    - https://github.com/ghofranehad/k8s-security.git
+
+  # Explicit list of namespaces this project can deploy to
+  # kube-system and default are intentionally excluded
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: kyverno
+    - server: https://kubernetes.default.svc
+      namespace: falco
+    - server: https://kubernetes.default.svc
+      namespace: sealed-secrets
+    - server: https://kubernetes.default.svc
+      namespace: network-policies
+    - server: https://kubernetes.default.svc
+      namespace: pod-security
+
+  # Cluster-scoped resources these apps are allowed to manage
+  # Kyverno and Falco need ClusterRoles, CRDs, etc.
+  clusterResourceWhitelist:
+    - group: "rbac.authorization.k8s.io"
+      kind: ClusterRole
+    - group: "rbac.authorization.k8s.io"
+      kind: ClusterRoleBinding
+    - group: "apiextensions.k8s.io"
+      kind: CustomResourceDefinition
+    - group: "admissionregistration.k8s.io"
+      kind: ValidatingWebhookConfiguration
+    - group: "admissionregistration.k8s.io"
+      kind: MutatingWebhookConfiguration
+    - group: "networking.k8s.io"
+      kind: NetworkPolicy
+
+  # Namespace-scoped resources allowed
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
