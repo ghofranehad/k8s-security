@@ -19,9 +19,7 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: kyverno
   syncPolicy:
-    prune: true
     automated: {}
-    selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
