@@ -15,6 +15,12 @@ spec:
         values: |-
           cleanupController:
             enabled: false
+          webhooksCleanup:
+            image:
+              tag: "1.30"
+          policyReportsCleanup:
+            image:
+              tag: "1.30"
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kyverno
