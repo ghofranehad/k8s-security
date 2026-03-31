@@ -12,9 +12,9 @@ spec:
     helm:
         valueFiles:
           - values.yaml
-    values: |-
-      cleanupController:
-        enabled: false
+        values: |-
+          cleanupController:
+            enabled: false
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kyverno
