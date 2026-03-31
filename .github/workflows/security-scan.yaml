@@ -1,3 +1,8 @@
+
+  # ENFORCEMENT — second scan with table format.
+  # Reason: SARIF format exits on any finding regardless of severity filter.
+  # Separating reporting (SARIF) from enforcement (table) allows full
+  # visibility in the Security tab while blocking only HIGH/CRITICAL.
 name: security-scan
 on:
   push:
@@ -28,7 +33,6 @@ jobs:
       - name: scan-manifest
         id: scan-manifest
         uses: aquasecurity/trivy-action@0.35.0
-        continue-on-error: true # ← allow SARIF upload to still run
         with:
           scan-type: 'config'
           hide-progress: true
@@ -38,13 +42,11 @@ jobs:
          # exit-code: '1'
       - name: Upload Trivy report scan image
         uses: github/codeql-action/upload-sarif@v4
-        if: always()            # ← run even if scan step failed
         with:
           sarif_file: 'trivy-results.sarif'
           category: trivy-image
       - name: Upload Trivy report scan manifest
         uses: github/codeql-action/upload-sarif@v4
-        if: always()            # ← run even if scan step failed
         with:
           sarif_file: 'trivy-man-results.sarif'
           category: trivy-manifest
@@ -61,6 +63,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.35.0
         with:
            scan-type: 'config'
+           format: 'table'
            hide-progress: true
            severity: 'HIGH,CRITICAL'
            exit-code: '1'
