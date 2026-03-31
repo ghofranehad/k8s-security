@@ -9,11 +9,11 @@ spec:
       repoURL: https://github.com/ghofranehad/k8s-security.git
       path: argocd/apps
       targetRevision: HEAD
-      #recurse: true
+      recurse: true
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argocd
   syncPolicy:
-    automated: {}
+    automated: true
     syncOptions:
       - CreateNamespace=true
