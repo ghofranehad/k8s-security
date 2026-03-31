@@ -33,6 +33,7 @@ spec:
   # Only this repo is a valid source — no other repo can deploy via this project
   sourceRepos:
     - https://github.com/ghofranehad/k8s-security.git
+    - https://kyverno.github.io/kyverno/
 
   # Explicit list of namespaces this project can deploy to
   # kube-system and default are intentionally excluded
@@ -47,6 +48,8 @@ spec:
       namespace: network-policies
     - server: https://kubernetes.default.svc
       namespace: pod-security
+    - server: https://kubernetes.default.svc
+      namespace: argocd
 
   # Cluster-scoped resources these apps are allowed to manage
   # Kyverno and Falco need ClusterRoles, CRDs, etc.
