@@ -5,11 +5,11 @@ metadata:
   namespace: argocd
 spec:
   project: security-hardening
-  source:
-    repoURL: 'https://kyverno.github.io/kyverno/'
-    chart:  kyverno
-    targetRevision: 3.3.7
-    helm:
+  sources:
+    - repoURL: 'https://kyverno.github.io/kyverno/'
+      chart:  kyverno
+      targetRevision: 3.3.7
+      helm:
         valueFiles:
           - values.yaml
         values: |-
@@ -19,12 +19,16 @@ spec:
             enabled: false
           policyReportsCleanup:
             enabled: false
+    - repoURL: 'https://github.com/ghofranehad/k8s-security.git'
+      targetRevision: HEAD
+      path: kyverno/policies
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kyverno
   syncPolicy:
     automated: 
-      enabled: true
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true

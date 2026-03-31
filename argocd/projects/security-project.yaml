@@ -66,6 +66,15 @@ spec:
       kind: MutatingWebhookConfiguration
     - group: "networking.k8s.io"
       kind: NetworkPolicy
+    # Kyverno new policy API (policies.kyverno.io/v1)
+    - group: "policies.kyverno.io"
+      kind: ValidatingPolicy
+    - group: "policies.kyverno.io"
+      kind: MutatingPolicy
+    - group: "policies.kyverno.io"
+      kind: GeneratingPolicy
+    - group: "policies.kyverno.io"
+      kind: ImageValidatingPolicy
 
   # Namespace-scoped resources allowed
   namespaceResourceWhitelist:
