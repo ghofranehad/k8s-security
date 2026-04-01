@@ -35,48 +35,16 @@ spec:
     - https://github.com/ghofranehad/k8s-security.git
     - https://kyverno.github.io/kyverno/
 
-  # Explicit list of namespaces this project can deploy to
-  # kube-system and default are intentionally excluded
+  # Allow deployment to any namespace on this cluster.
+  # Source repo restriction (sourceRepos) is the primary security control.
   destinations:
     - server: https://kubernetes.default.svc
-      namespace: kyverno
-    - server: https://kubernetes.default.svc
-      namespace: falco
-    - server: https://kubernetes.default.svc
-      namespace: sealed-secrets
-    - server: https://kubernetes.default.svc
-      namespace: network-policies
-    - server: https://kubernetes.default.svc
-      namespace: pod-security
-    - server: https://kubernetes.default.svc
-      namespace: argocd
+      namespace: "*"
 
-  # Cluster-scoped resources these apps are allowed to manage
-  # Kyverno and Falco need ClusterRoles, CRDs, etc.
   clusterResourceWhitelist:
-    - group: "rbac.authorization.k8s.io"
-      kind: ClusterRole
-    - group: "rbac.authorization.k8s.io"
-      kind: ClusterRoleBinding
-    - group: "apiextensions.k8s.io"
-      kind: CustomResourceDefinition
-    - group: "admissionregistration.k8s.io"
-      kind: ValidatingWebhookConfiguration
-    - group: "admissionregistration.k8s.io"
-      kind: MutatingWebhookConfiguration
-    - group: "networking.k8s.io"
-      kind: NetworkPolicy
-    # Kyverno new policy API (policies.kyverno.io/v1)
-    - group: "policies.kyverno.io"
-      kind: ValidatingPolicy
-    - group: "policies.kyverno.io"
-      kind: MutatingPolicy
-    - group: "policies.kyverno.io"
-      kind: GeneratingPolicy
-    - group: "policies.kyverno.io"
-      kind: ImageValidatingPolicy
+    - group: "*"
+      kind: "*"
 
-  # Namespace-scoped resources allowed
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
