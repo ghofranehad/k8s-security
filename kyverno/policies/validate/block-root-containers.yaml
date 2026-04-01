@@ -1,5 +1,5 @@
 apiVersion: policies.kyverno.io/v1
-kind: kubectl describe validatingpolicy block-root-containers
+kind: ValidatingPolicy
 metadata:
   name: block-root-containers
 spec:
@@ -12,5 +12,5 @@ spec:
         operations: [CREATE, UPDATE]
         resources: [pods]
   validations:
-    - message: Containers must not run as root.
+    - message: Containers must not run as root. 
       expression: "object.spec.containers.all(c, has(c.securityContext) && has(c.securityContext.runAsNonRoot) && c.securityContext.runAsNonRoot == true) && object.spec.?initContainers.orValue([]).all(c, has(c.securityContext) && has(c.securityContext.runAsNonRoot) && c.securityContext.runAsNonRoot == true)"
