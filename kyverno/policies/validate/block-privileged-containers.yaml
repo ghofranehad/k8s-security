@@ -1,22 +1,5 @@
-# =============================================================================
-# ValidatingPolicy — block-privileged-containers
-# =============================================================================
-#
-# ATTACK VECTOR:
-#   A privileged container has full access to the host Linux kernel — it can
-#   mount host filesystems, load kernel modules, and escape the container
-#   boundary entirely. This is the most direct path to full node compromise.
-#   A single privileged container negates all other pod-level security controls.
-#
-# NOTE ON DESIGN:
-#   We require securityContext to exist (not just check privileged flag).
-#   A missing securityContext means no security controls are defined at all —
-#   which is itself a violation. This also ensures other policies that check
-#   runAsNonRoot, readOnlyRootFilesystem, etc. have something to validate against.
-#
-# MITRE ATT&CK: T1611 — Escape to Host
-# CIS Benchmark: 5.2.1 — Minimize the admission of privileged containers
-# =============================================================================
+##### block-privileged-containers: deny privileged mode + require securityContext ####
+
 
 apiVersion: policies.kyverno.io/v1
 kind: ValidatingPolicy

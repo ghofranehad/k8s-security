@@ -1,3 +1,6 @@
+#####  block-root-containers: enforce runAsNonRoot on all containers ####
+
+
 apiVersion: policies.kyverno.io/v1
 kind: ValidatingPolicy
 metadata:

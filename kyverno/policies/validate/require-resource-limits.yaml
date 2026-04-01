@@ -1,16 +1,4 @@
-# =============================================================================
-# ValidatingPolicy — require-resource-limits
-# =============================================================================
-#
-# ATTACK VECTOR:
-#   A container without resource limits can consume unlimited CPU and memory,
-#   crashing other pods on the same node (noisy neighbor / denial of service).
-#   An attacker who compromises a pod can deliberately exhaust node resources
-#   to disrupt the entire cluster.
-#
-# MITRE ATT&CK: T1499 — Endpoint Denial of Service
-# CIS Benchmark: 5.2.4 — Minimize the admission of containers without resource limits
-# =============================================================================
+#####  require-resource-limits: enforce CPU and memory limits ####
 
 apiVersion: policies.kyverno.io/v1
 kind: ValidatingPolicy
