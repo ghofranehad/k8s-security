@@ -16,13 +16,24 @@ spec:
         expression: |
           Object{
             spec: Object.spec{
+              securityContext: Object.spec.securityContext{
+                seccompProfile: Object.spec.securityContext.seccompProfile{
+                  type: "RuntimeDefault"
+                }
+              },
               containers: object.spec.containers.map(c, Object.spec.containers{
                 name: c.name,
                 securityContext: Object.spec.containers.securityContext{
                   runAsNonRoot: true,
                   readOnlyRootFilesystem: true,
                   allowPrivilegeEscalation: false,
-                  privileged: false
+                  privileged: false,
+                  capabilities: Object.spec.containers.securityContext.capabilities{
+                    drop: ["ALL"]
+                  },
+                  seccompProfile: Object.spec.containers.securityContext.seccompProfile{
+                    type: "RuntimeDefault"
+                  }
                 }
               })
             }
