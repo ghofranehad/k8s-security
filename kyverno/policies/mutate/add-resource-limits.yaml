@@ -19,7 +19,7 @@ spec:
               containers: object.spec.containers.map(c, Object.spec.containers{
                 name: c.name,
                 resources: Object.spec.containers.resources{
-                  limits: Object.spec.containers.resources.limits{
+                  limits: {
                     "cpu": "100m",
                     "memory": "256Mi"
                   }
