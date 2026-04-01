@@ -22,7 +22,8 @@ spec:
     - repoURL: 'https://github.com/ghofranehad/k8s-security.git'
       targetRevision: HEAD
       path: kyverno/policies
-      recurse: true
+      directory:
+        recurse: true
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kyverno
