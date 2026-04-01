@@ -1,0 +1,27 @@
+
+# Applied to application namespaces. Restricted is the highest enforcement
+# level — it enforces the full set of current pod hardening best practices:
+# - No privileged containers
+# - Must run as non-root
+# - Read-only root filesystem recommended
+# - Seccomp profile required (RuntimeDefault or Localhost)
+# - All capabilities must be dropped
+# - No privilege escalation allowed
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: default
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sealed-secrets
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted

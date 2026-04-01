@@ -1,4 +1,7 @@
 # Automatically generates a default-deny-all NetworkPolicy in every new namespace.
+# NOTE: Synchronization verified working for single deletion recovery (Kyverno 3.7.1).
+# Rapid successive deletions may not trigger full re-sync — known behaviorin
+# GeneratingPolicy v1 API. Primary protection is namespace-creation trigger.
 
 apiVersion: policies.kyverno.io/v1
 kind: GeneratingPolicy
