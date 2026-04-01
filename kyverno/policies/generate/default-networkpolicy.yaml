@@ -26,16 +26,16 @@ spec:
   generate:
     - expression: >-
         generator.Apply(variables.targetNs, [
-          Object{
-            apiVersion: "networking.k8s.io/v1",
-            kind: "NetworkPolicy",
-            metadata: Object.metadata{
-              name: "default-deny-all",
-              namespace: variables.targetNs
+          {
+            "apiVersion": "networking.k8s.io/v1",
+            "kind": "NetworkPolicy",
+            "metadata": {
+              "name": "default-deny-all",
+              "namespace": variables.targetNs
             },
-            spec: Object.spec{
-              podSelector: Object.spec.podSelector{},
-              policyTypes: ["Ingress", "Egress"]
+            "spec": {
+              "podSelector": {},
+              "policyTypes": ["Ingress", "Egress"]
             }
           }
         ])
