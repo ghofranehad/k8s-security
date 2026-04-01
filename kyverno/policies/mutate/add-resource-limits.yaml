@@ -1,3 +1,4 @@
+### add-resource-limits: inject default CPU/memory limits when not specified ###
 apiVersion: policies.kyverno.io/v1
 kind: MutatingPolicy
 metadata:

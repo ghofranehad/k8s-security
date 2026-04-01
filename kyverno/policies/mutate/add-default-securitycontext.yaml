@@ -1,27 +1,4 @@
-# =============================================================================
-# MutatingPolicy — add-default-securitycontext
-# =============================================================================
-#
-# PURPOSE:
-#   Automatically injects secure securityContext defaults into pods at admission.
-#   Developers who forget security context get safe defaults instead of a
-#   rejected deployment. Validate policies then verify the final state.
-#
-# DESIGN:
-#   Mutate runs BEFORE validate in Kyverno's pipeline:
-#     Pod submitted → Mutate adds defaults → Validate checks final state
-#
-#   ApplyConfiguration uses strategic merge — existing values are preserved.
-#   If a container already sets runAsNonRoot: false explicitly, this mutation
-#   will NOT override it (and the validate policy will then catch it).
-#
-#   The container `name` field is required as the strategic merge key —
-#   without it Kyverno cannot identify which container to patch.
-#
-# MITRE ATT&CK: T1611 — Escape to Host (privileged containers)
-#               T1105 — Ingress Tool Transfer (writable rootfs)
-# =============================================================================
-
+### add-default-securitycontext: inject runAsNonRoot, readOnlyRootFilesystem, allowPrivilegeEscalation=false when securityContext is missing ####
 apiVersion: policies.kyverno.io/v1
 kind: MutatingPolicy
 metadata:
