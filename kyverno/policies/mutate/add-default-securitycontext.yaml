@@ -1,4 +1,7 @@
 ### add-default-securitycontext: inject runAsNonRoot, readOnlyRootFilesystem, allowPrivilegeEscalation=false when securityContext is missing ####
+# capabilities.drop and seccompProfile are atomic fields in the Kubernetes API —
+# they cannot be set via ApplyConfiguration (strategic merge patch).
+# ApplyConfiguration handles non-atomic fields; JSONPatch handles atomic ones.
 apiVersion: policies.kyverno.io/v1
 kind: MutatingPolicy
 metadata:
@@ -11,6 +14,7 @@ spec:
         operations: [CREATE]
         resources: [pods]
   mutations:
+    # Step 1: non-atomic fields — strategic merge patch is safe here
     - patchType: ApplyConfiguration
       applyConfiguration:
         expression: |
@@ -27,14 +31,26 @@ spec:
                   runAsNonRoot: true,
                   readOnlyRootFilesystem: true,
                   allowPrivilegeEscalation: false,
-                  privileged: false,
-                  capabilities: Object.spec.containers.securityContext.capabilities{
-                    drop: ["ALL"]
-                  },
-                  seccompProfile: Object.spec.containers.securityContext.seccompProfile{
-                    type: "RuntimeDefault"
-                  }
+                  privileged: false
                 }
               })
             }
           }
+    # Step 2: atomic fields — must use JSONPatch, runs after ApplyConfiguration
+    - patchType: JSONPatch
+      jsonPatch:
+        expression: |
+          lists.range(object.spec.containers.size()).map(i,
+            JSONPatch{
+              op: "add",
+              path: "/spec/containers/" + string(i) + "/securityContext/capabilities",
+              value: {"drop": ["ALL"]}
+            }
+          ) +
+          lists.range(object.spec.containers.size()).map(i,
+            JSONPatch{
+              op: "add",
+              path: "/spec/containers/" + string(i) + "/securityContext/seccompProfile",
+              value: {"type": "RuntimeDefault"}
+            }
+          )
