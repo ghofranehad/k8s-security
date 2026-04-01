@@ -28,5 +28,10 @@ spec:
         resource.Get("networking.k8s.io/v1", "networkpolicies",
                      "kyverno-templates", "default-deny-all")
 
+  evaluation:
+    synchronize:
+      # Keep generated NetworkPolicies in sync with the template.
+      enabled: true
+
   generate:
     - expression: generator.Apply(variables.targetNs, [variables.template])
