@@ -1,5 +1,5 @@
 apiVersion: policies.kyverno.io/v1
-kind: ValidatingPolicy
+kind: kubectl describe validatingpolicy block-root-containers
 metadata:
   name: block-root-containers
 spec:
