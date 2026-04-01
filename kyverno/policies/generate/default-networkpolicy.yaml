@@ -1,0 +1,41 @@
+# Automatically generates a default-deny-all NetworkPolicy in every new namespace.
+
+apiVersion: policies.kyverno.io/v1
+kind: GeneratingPolicy
+metadata:
+  name: default-networkpolicy
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations: ['CREATE']
+        resources: ['namespaces']
+
+  matchConditions:
+    - name: exclude-system-namespaces
+      expression: >-
+        !(object.metadata.name in ['kube-system', 'kube-public', 'kube-node-lease',
+        'argocd', 'kyverno', 'falco', 'sealed-secrets',
+        'calico-system', 'calico-apiserver', 'tigera-operator'])
+
+  variables:
+    - name: targetNs
+      expression: 'object.metadata.name'
+
+  generate:
+    - expression: >-
+        generator.Apply(variables.targetNs, [
+          Object{
+            apiVersion: "networking.k8s.io/v1",
+            kind: "NetworkPolicy",
+            metadata: Object.metadata{
+              name: "default-deny-all",
+              namespace: variables.targetNs
+            },
+            spec: Object.spec{
+              podSelector: Object.spec.podSelector{},
+              policyTypes: ["Ingress", "Egress"]
+            }
+          }
+        ])
