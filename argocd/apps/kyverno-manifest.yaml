@@ -12,7 +12,7 @@ spec:
       helm:
         valueFiles:
           - values.yaml
-        values: |-
+        values:|-
           cleanupController:
             enabled: false
           webhooksCleanup:
