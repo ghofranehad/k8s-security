@@ -1,0 +1,28 @@
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
+metadata:
+  name: add-resource-limits
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [pods]
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: |
+          Object{
+            spec: Object.spec{
+              containers: object.spec.containers.map(c, Object.spec.containers{
+                name: c.name,
+                resources: Object.spec.containers.resources{
+                  limits: Object.spec.containers.resources.limits{
+                    "cpu": "100m",
+                    "memory": "256Mi"
+                  }
+                }
+              })
+            }
+          }
