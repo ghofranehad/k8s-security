@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: falco
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: security-hardening
+
+  sources:
+    - repoURL: 'https://falcosecurity.github.io/charts'
+      chart: falco
+      targetRevision: 4.21.2
+      helm:
+        valueFiles:
+          - $values/falco/values.yaml
+
+    - repoURL: 'https://github.com/ghofranehad/k8s-security.git'
+      targetRevision: HEAD
+      ref: values
+
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: falco
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

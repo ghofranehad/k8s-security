@@ -1,0 +1,11 @@
+# Security tools that need kernel-level access run under privileged PSS.
+# Falco requires eBPF syscall monitoring — unavoidable privilege escalation.
+# Scope is intentionally narrow: only the falco namespace.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: falco
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    pod-security.kubernetes.io/audit: privileged

@@ -1,0 +1,67 @@
+driver:
+  kind: modern_ebpf
+
+falco:
+  json_output: true
+  log_stderr: true
+  log_level: info
+  grpc:
+    enabled: false
+  grpc_output:
+    enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# Custom rules — augment Falco's built-in ruleset
+customRules:
+  custom-rules.yaml: |-
+    # Detect shell spawned inside any container — common post-exploit step
+    - rule: Shell Spawned in Container
+      desc: A shell binary was executed inside a running container
+      condition: >
+        spawned_process and container
+        and proc.name in (sh, bash, zsh, dash, ash)
+        and not proc.pname in (sh, bash, zsh, dash, ash)
+      output: >
+        Shell spawned in container
+        (user=%user.name container=%container.name
+        image=%container.image.repository:%container.image.tag
+        shell=%proc.name parent=%proc.pname cmdline=%proc.cmdline)
+      priority: WARNING
+      tags: [container, shell, mitre_execution]
+
+    # Detect reads of sensitive files from inside a container
+    - rule: Sensitive File Read in Container
+      desc: A process inside a container read a sensitive system file
+      condition: >
+        open_read and container
+        and fd.name in (/etc/shadow, /etc/passwd, /etc/sudoers,
+                        /root/.ssh/authorized_keys, /root/.ssh/id_rsa)
+      output: >
+        Sensitive file read inside container
+        (user=%user.name container=%container.name
+        image=%container.image.repository:%container.image.tag
+        file=%fd.name cmdline=%proc.cmdline)
+      priority: ERROR
+      tags: [container, filesystem, mitre_credential_access]
+
+    # Detect unexpected outbound connections from containers
+    - rule: Unexpected Outbound Connection
+      desc: A container made an outbound connection to an unexpected port
+      condition: >
+        outbound and container
+        and not fd.sport in (53, 80, 443, 8080, 8443)
+        and not proc.name in (falco, falcoctl)
+      output: >
+        Unexpected outbound connection from container
+        (user=%user.name container=%container.name
+        image=%container.image.repository:%container.image.tag
+        connection=%fd.name)
+      priority: WARNING
+      tags: [container, network, mitre_exfiltration]
