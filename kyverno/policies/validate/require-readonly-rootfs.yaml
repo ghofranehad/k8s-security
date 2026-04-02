@@ -13,6 +13,12 @@ spec:
         apiVersions: [v1]
         operations: [CREATE, UPDATE]
         resources: [pods]
+  matchConditions:
+    - name: exclude-infra-namespaces
+      expression: >-
+        !(object.metadata.namespace in ['kube-system', 'kube-public', 'kube-node-lease',
+        'argocd', 'kyverno', 'falco', 'sealed-secrets',
+        'calico-system', 'calico-apiserver', 'tigera-operator'])
   validations:
     - message: >-
         Containers must use a read-only root filesystem.

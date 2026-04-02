@@ -13,6 +13,12 @@ spec:
         apiVersions: [v1]
         operations: [CREATE]
         resources: [pods]
+  matchConditions:
+    - name: exclude-infra-namespaces
+      expression: >-
+        !(object.metadata.namespace in ['kube-system', 'kube-public', 'kube-node-lease',
+        'argocd', 'kyverno', 'falco', 'sealed-secrets',
+        'calico-system', 'calico-apiserver', 'tigera-operator'])
   mutations:
     # Step 1: non-atomic fields — strategic merge patch is safe here
     - patchType: ApplyConfiguration
