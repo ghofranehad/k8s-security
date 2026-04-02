@@ -9,17 +9,26 @@ spec:
   validationActions:
     - Audit
   matchConstraints:
-    namespaceSelector:
-      matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: NotIn
-          values: [kube-system, kube-public, kube-node-lease, argocd, kyverno,
-                   falco, sealed-secrets, calico-system, calico-apiserver, tigera-operator]
     resourceRules:
       - apiGroups: ['']
         apiVersions: [v1]
         operations: [CREATE, UPDATE]
         resources: [pods]
+    excludeResourceRules:
+      - apiGroups: ['apps']
+        apiVersions: ['*']
+        operations: ['*']
+        resources: ['daemonsets', 'deployments', 'replicasets', 'statefulsets']
+      - apiGroups: ['batch']
+        apiVersions: ['*']
+        operations: ['*']
+        resources: ['jobs', 'cronjobs']
+  matchConditions:
+    - name: exclude-infra-namespaces
+      expression: >-
+        !(object.metadata.namespace in ['kube-system', 'kube-public', 'kube-node-lease',
+        'argocd', 'kyverno', 'falco', 'sealed-secrets',
+        'calico-system', 'calico-apiserver', 'tigera-operator'])
   validations:
     - message: Containers must not run as root. 
       expression: "object.spec.containers.all(c, has(c.securityContext) && has(c.securityContext.runAsNonRoot) && c.securityContext.runAsNonRoot == true) && object.spec.?initContainers.orValue([]).all(c, has(c.securityContext) && has(c.securityContext.runAsNonRoot) && c.securityContext.runAsNonRoot == true)"
