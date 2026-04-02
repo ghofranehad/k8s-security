@@ -1,6 +1,13 @@
 driver:
   kind: modern_ebpf
 
+# falcoctl artifact follow uses inotify to watch for rule updates — not supported
+# on WSL2 kernel. Disable follow; install still runs once on pod startup.
+falcoctl:
+  artifact:
+    follow:
+      enabled: false
+
 falco:
   json_output: true
   log_stderr: true
