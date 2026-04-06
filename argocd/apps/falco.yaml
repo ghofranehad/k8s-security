@@ -18,7 +18,7 @@ spec:
 
     - repoURL: 'https://github.com/ghofranehad/k8s-security.git'
       targetRevision: HEAD
-      ref: values
+      path: falco
 
   destination:
     server: 'https://kubernetes.default.svc'
