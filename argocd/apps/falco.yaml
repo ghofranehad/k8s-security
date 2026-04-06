@@ -14,7 +14,7 @@ spec:
       targetRevision: 4.21.2
       helm:
         valueFiles:
-          - $values/falco/values.yaml
+          - $falco/falco/values.yaml
 
     - repoURL: 'https://github.com/ghofranehad/k8s-security.git'
       targetRevision: HEAD
