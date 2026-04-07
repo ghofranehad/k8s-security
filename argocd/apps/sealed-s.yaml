@@ -15,6 +15,14 @@ spec:
     helm:
       values: |
         fullnameOverride: sealed-secrets-controller
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
         resources:
           requests:
             cpu: 50m
