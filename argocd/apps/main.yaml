@@ -5,9 +5,14 @@ metadata:
   namespace: argocd
 spec:
   project: security-hardening
-  source:
-      repoURL: https://github.com/ghofranehad/k8s-security.git
+  sources:
+    - repoURL: https://github.com/ghofranehad/k8s-security.git
       path: argocd/apps
+      targetRevision: HEAD
+      directory:
+        recurse: true
+    - repoURL: https://github.com/ghofranehad/k8s-security.git
+      path: argocd/projects
       targetRevision: HEAD
       directory:
         recurse: true
