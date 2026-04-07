@@ -15,14 +15,15 @@ spec:
     helm:
       values: |
         fullnameOverride: sealed-secrets-controller
-        securityContext:
+        podSecurityContext:
           runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           capabilities:
             drop: ["ALL"]
-          seccompProfile:
-            type: RuntimeDefault
         resources:
           requests:
             cpu: 50m
