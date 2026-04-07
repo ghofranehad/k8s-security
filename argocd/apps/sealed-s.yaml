@@ -16,10 +16,13 @@ spec:
       values: |
         fullnameOverride: sealed-secrets-controller
         podSecurityContext:
-          runAsNonRoot: true
+          enabled: true
           seccompProfile:
             type: RuntimeDefault
-        securityContext:
+        containerSecurityContext:
+          enabled: true
+          runAsNonRoot: true
+          runAsUser: 1001
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           capabilities:
