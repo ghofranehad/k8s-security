@@ -146,11 +146,69 @@ receive automatic rule updates from the Falco rules repository.
 
 ---
 
+## Problem 4: Falco fails on control-plane and worker2 — inotify instance limit exhausted
+
+### Symptom
+```
+Error: could not initialize inotify handler
+```
+Only the worker node pod runs successfully. Control-plane and worker2 pods crash.
+
+### Root Cause
+WSL2 defaults to `fs.inotify.max_user_instances=128`. The control-plane node
+consumes most of those instances with its system components (etcd, kube-apiserver,
+kube-scheduler, kube-controller-manager). Worker2 also hits the limit under load.
+Falco cannot obtain an inotify instance and crashes.
+
+### Fix
+Run on the WSL2 host before creating Kind clusters:
+
+```bash
+echo "fs.inotify.max_user_instances=1024" | sudo tee -a /etc/sysctl.conf
+echo "fs.inotify.max_user_watches=1048576" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
+**This is a documented Kind prerequisite for Linux/WSL2.** Apply it once on the
+host — it persists across reboots via `/etc/sysctl.conf`.
+
+---
+
+## Problem 5: container.name and k8s.pod.name always null
+
+### Symptom
+```json
+{"rule": "Sensitive File Read in Container", "output_fields": {"container.name": null, "k8s.pod.name": null, "proc.cmdline": "cat /etc/passwd"}}
+```
+Falco detects the syscall correctly but cannot enrich alerts with container or pod identity.
+
+### Root Cause
+Falco enriches events by querying the container runtime via the CRI socket
+(`/host/run/containerd/containerd.sock`). In Kind/WSL2, the CRI metadata
+query does not return container information reliably — the socket is accessible
+but the enrichment pipeline does not associate the syscall's cgroup with a
+container entry in time.
+
+### Impact
+- Rules fire correctly (syscall detection works)
+- Cannot filter alerts by pod/container name
+- False positives from host processes (`cron`, `runc`) cannot be suppressed by container name
+
+### Production note
+In a real cluster (bare metal or cloud), the CRI socket is stable and enrichment
+works. Alerts include full `k8s.pod.name`, `container.name`, `k8s.ns.name` fields,
+enabling precise per-workload alerting and SIEM correlation.
+
+---
+
 ## Decision
 
 Apply `excludeResourceRules` + `matchConditions` pattern to all Kyverno policies.
-Disable `falcoctl artifact follow` on WSL2/Kind environments.
+Disable `falcoctl` entirely on WSL2/Kind environments.
+Raise inotify limits on WSL2 host before cluster creation.
+Accept container metadata null as a WSL2/Kind lab limitation — syscall detection works.
 
 ## Status
 
-Resolved — Falco running on Kind/WSL2 with modern_ebpf driver and custom rules loaded.
+Resolved — Falco running on all 3 Kind nodes, rules firing correctly.
+Container metadata enrichment not available in WSL2/Kind (documented limitation).
