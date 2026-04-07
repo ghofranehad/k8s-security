@@ -22,6 +22,11 @@ falco:
   grpc_output:
     enabled: false
 
+collectors:
+  containerd:
+    enabled: true
+    socket: /host/run/containerd/containerd.sock
+
 resources:
   requests:
     cpu: 100m
