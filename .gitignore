@@ -7,11 +7,13 @@
 *.env
 .env.*
 secrets/
-*secret*.yaml
+*-secret.yaml
+*-secrets.yaml
+*_secret.yaml
+*_secrets.yaml
+secret.yaml
+secrets.yaml
 *secret*.json
-
-# Sealed Secrets public cert (safe to commit, but generated locally)
-# pub-cert.pem — uncomment to exclude
 
 # Kubeconfig files — contain cluster credentials
 kubeconfig
