@@ -35,6 +35,7 @@ spec:
     - https://github.com/ghofranehad/k8s-security.git
     - https://kyverno.github.io/kyverno/
     - https://falcosecurity.github.io/charts
+    - https://bitnami-labs.github.io/sealed-secrets
 
   # Allow deployment to any namespace on this cluster.
   # Source repo restriction (sourceRepos) is the primary security control.
