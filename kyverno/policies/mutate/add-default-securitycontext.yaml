@@ -44,6 +44,7 @@ spec:
                 name: c.name,
                 securityContext: Object.spec.containers.securityContext{
                   runAsNonRoot: true,
+                  runAsUser: 1000,
                   readOnlyRootFilesystem: true,
                   allowPrivilegeEscalation: false,
                   privileged: false
