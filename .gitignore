@@ -14,6 +14,8 @@ secrets/
 secret.yaml
 secrets.yaml
 *secret*.json
+# SealedSecrets are encrypted — safe to commit
+!*sealed*.yaml
 
 # Kubeconfig files — contain cluster credentials
 kubeconfig
