@@ -39,6 +39,15 @@ spec:
                     "memory": "256Mi"
                   }
                 }
+              }),
+              initContainers: object.spec.?initContainers.orValue([]).map(c, Object.spec.initContainers{
+                name: c.name,
+                resources: Object.spec.initContainers.resources{
+                  limits: {
+                    "cpu": "100m",
+                    "memory": "256Mi"
+                  }
+                }
               })
             }
           }

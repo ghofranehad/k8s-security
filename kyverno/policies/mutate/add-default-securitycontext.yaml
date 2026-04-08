@@ -49,6 +49,16 @@ spec:
                   allowPrivilegeEscalation: false,
                   privileged: false
                 }
+              }),
+              initContainers: object.spec.?initContainers.orValue([]).map(c, Object.spec.initContainers{
+                name: c.name,
+                securityContext: Object.spec.initContainers.securityContext{
+                  runAsNonRoot: true,
+                  runAsUser: 1000,
+                  readOnlyRootFilesystem: true,
+                  allowPrivilegeEscalation: false,
+                  privileged: false
+                }
               })
             }
           }
@@ -67,6 +77,20 @@ spec:
             JSONPatch{
               op: "add",
               path: "/spec/containers/" + string(i) + "/securityContext/seccompProfile",
+              value: {"type": "RuntimeDefault"}
+            }
+          ) +
+          object.spec.?initContainers.orValue([]).map(i, i).mapWithIndex(idx, _,
+            JSONPatch{
+              op: "add",
+              path: "/spec/initContainers/" + string(idx) + "/securityContext/capabilities",
+              value: {"drop": ["ALL"]}
+            }
+          ) +
+          object.spec.?initContainers.orValue([]).map(i, i).mapWithIndex(idx, _,
+            JSONPatch{
+              op: "add",
+              path: "/spec/initContainers/" + string(idx) + "/securityContext/seccompProfile",
               value: {"type": "RuntimeDefault"}
             }
           )
