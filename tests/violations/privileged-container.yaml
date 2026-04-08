@@ -1,0 +1,27 @@
+# Violation test: block-privileged-containers
+# Expected: DENIED by Kyverno — privileged must not be true
+# Run: kubectl apply -f tests/violations/privileged-container.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: violation-privileged
+  namespace: default
+spec:
+  containers:
+  - name: test
+    image: alpine:3.18
+    command: ["sleep", "3600"]
+    securityContext:
+      privileged: true
+      runAsNonRoot: true
+      runAsUser: 1000
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi

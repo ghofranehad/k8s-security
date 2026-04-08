@@ -1,0 +1,26 @@
+# Violation test: block-root-containers
+# Expected: DENIED by Kyverno — runAsNonRoot must be true
+# Run: kubectl apply -f tests/violations/root-container.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: violation-root-container
+  namespace: default
+spec:
+  containers:
+  - name: test
+    image: alpine:3.18
+    command: ["sleep", "3600"]
+    securityContext:
+      runAsNonRoot: false
+      runAsUser: 0
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi

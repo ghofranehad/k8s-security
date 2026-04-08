@@ -1,0 +1,26 @@
+# Violation test: require-readonly-rootfs
+# Expected: DENIED by Kyverno — readOnlyRootFilesystem must be true
+# Run: kubectl apply -f tests/violations/writable-rootfs.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: violation-writable-rootfs
+  namespace: default
+spec:
+  containers:
+  - name: test
+    image: alpine:3.18
+    command: ["sleep", "3600"]
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      readOnlyRootFilesystem: false
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi

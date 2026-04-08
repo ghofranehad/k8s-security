@@ -1,0 +1,22 @@
+# Violation test: require-resource-limits
+# Expected: DENIED by Kyverno — CPU and memory limits must be set
+# Run: kubectl apply -f tests/violations/no-resource-limits.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: violation-no-limits
+  namespace: default
+spec:
+  containers:
+  - name: test
+    image: alpine:3.18
+    command: ["sleep", "3600"]
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault
