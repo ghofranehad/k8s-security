@@ -6,7 +6,7 @@ metadata:
   name: require-readonly-rootfs
 spec:
   validationActions:
-    - Audit
+    - Deny
   matchConstraints:
     resourceRules:
       - apiGroups: ['']

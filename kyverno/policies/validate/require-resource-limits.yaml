@@ -6,7 +6,7 @@ metadata:
   name: require-resource-limits
 spec:
   validationActions:
-    - Audit
+    - Deny
   matchConstraints:
     resourceRules:
       - apiGroups: ['']
