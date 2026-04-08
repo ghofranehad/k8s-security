@@ -1,6 +1,12 @@
 # Violation test: require-readonly-rootfs
-# Expected: DENIED by Kyverno — readOnlyRootFilesystem must be true
-# Run: kubectl apply -f tests/violations/writable-rootfs.yaml
+# Expected result with mutation enabled:  Pod RUNS — MutatingPolicy overrides readOnlyRootFilesystem to true
+# Expected result with mutation disabled: Pod DENIED by require-readonly-rootfs ValidatingPolicy
+#
+# To test the Deny behavior, disable the mutation first:
+#   kubectl delete mutatingpolicy add-default-securitycontext
+#   kubectl apply -f tests/violations/writable-rootfs.yaml
+#   # restore after test:
+#   kubectl apply -f kyverno/policies/mutate/add-default-securitycontext.yaml
 apiVersion: v1
 kind: Pod
 metadata:

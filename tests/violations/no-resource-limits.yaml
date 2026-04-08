@@ -1,6 +1,12 @@
 # Violation test: require-resource-limits
-# Expected: DENIED by Kyverno — CPU and memory limits must be set
-# Run: kubectl apply -f tests/violations/no-resource-limits.yaml
+# Expected result with mutation enabled:  Pod RUNS — MutatingPolicy injects default resource limits
+# Expected result with mutation disabled: Pod DENIED by require-resource-limits ValidatingPolicy
+#
+# To test the Deny behavior, disable the mutation first:
+#   kubectl delete mutatingpolicy add-resource-limits
+#   kubectl apply -f tests/violations/no-resource-limits.yaml
+#   # restore after test:
+#   kubectl apply -f kyverno/policies/mutate/add-resource-limits.yaml
 apiVersion: v1
 kind: Pod
 metadata:

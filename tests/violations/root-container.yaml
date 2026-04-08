@@ -1,6 +1,12 @@
 # Violation test: block-root-containers
-# Expected: DENIED by Kyverno — runAsNonRoot must be true
-# Run: kubectl apply -f tests/violations/root-container.yaml
+# Expected result with mutation enabled:  Pod RUNS — MutatingPolicy overrides runAsNonRoot to true
+# Expected result with mutation disabled: Pod DENIED by block-root-containers ValidatingPolicy
+#
+# To test the Deny behavior, disable the mutation first:
+#   kubectl delete mutatingpolicy add-default-securitycontext
+#   kubectl apply -f tests/violations/root-container.yaml
+#   # restore after test:
+#   kubectl apply -f kyverno/policies/mutate/add-default-securitycontext.yaml
 apiVersion: v1
 kind: Pod
 metadata:
