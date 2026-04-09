@@ -35,7 +35,7 @@ jobs:
           hide-progress: true
           format: 'sarif'
           output: 'trivy-man-results.sarif'
-          skip-files: 'tests/violations'
+          skip-dirs: 'tests/violations'
       - name: Upload Trivy report scan image
         uses: github/codeql-action/upload-sarif@v4
         with:
@@ -63,7 +63,7 @@ jobs:
            hide-progress: true
            severity: 'HIGH,CRITICAL'
            exit-code: '1'
-           skip-files: 'tests/violations'
+           skip-dirs: 'tests/violations'
 
   supply-chain:
     name: Supply Chain Security
