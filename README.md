@@ -79,6 +79,9 @@ A production-grade Kubernetes security hardening project demonstrating defense-i
 | Runtime | Falco | In-progress attacks — shell spawn, credential access, exfiltration |
 | Secrets | Sealed Secrets | Plaintext credentials committed to Git |
 
+MITRE ATT&CK coverage: [docs/MITRE-MAPPING.md](docs/MITRE-MAPPING.md)
+Threat model: [docs/THREAT-MODEL.md](docs/THREAT-MODEL.md)
+
 ---
 
 ## Quick Start
