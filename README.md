@@ -79,9 +79,6 @@ A production-grade Kubernetes security hardening project demonstrating defense-i
 | Runtime | Falco | In-progress attacks — shell spawn, credential access, exfiltration |
 | Secrets | Sealed Secrets | Plaintext credentials committed to Git |
 
-MITRE ATT&CK coverage: [docs/MITRE-MAPPING.md](docs/MITRE-MAPPING.md)
-Threat model: [docs/THREAT-MODEL.md](docs/THREAT-MODEL.md)
-
 ---
 
 ## Quick Start
@@ -219,6 +216,13 @@ kubectl apply -f kyverno/policies/mutate/add-default-securitycontext.yaml
 |-----|----------|
 | [ADR-001](docs/adr/ADR-001-cluster-setup.md) | Kind + Calico; kubeadm hardening tradeoffs |
 | [ADR-002](docs/adr/ADR-002-falco-wsl2-kyverno-exclusion.md) | Falco WSL2 limitations + Kyverno namespace exclusion strategy |
+| [ADR-003](docs/adr/ADR-003-kyverno-vs-opa.md) | Kyverno over OPA/Gatekeeper |
+| [ADR-004](docs/adr/ADR-004-calico-vs-cilium-flannel.md) | Calico over Cilium/Flannel |
+| [ADR-005](docs/adr/ADR-005-sealed-secrets-vs-eso.md) | Sealed Secrets over External Secrets Operator |
+
+MITRE ATT&CK coverage: [docs/MITRE-MAPPING.md](docs/MITRE-MAPPING.md)
+Threat model: [docs/THREAT-MODEL.md](docs/THREAT-MODEL.md)
+CIS Benchmark mapping: [docs/CIS-BENCHMARK-MAPPING.md](docs/CIS-BENCHMARK-MAPPING.md)
 
 ---
 
