@@ -1,0 +1,36 @@
+# Image signature verification — Cosign/Sigstore keyless
+# Verifies that images from falcosecurity registry are signed by the
+# official falcosecurity GitHub Actions pipeline before admission.
+#
+# Threat prevented: registry compromise — a tampered image without a valid
+# signature is denied at admission, before it ever runs in the cluster.
+#
+# Uses Kyverno ClusterPolicy — image verification is not yet in the new
+# policies.kyverno.io/v1 API.
+#
+# validationFailureAction: Audit — observe violations before switching to Enforce.
+# Switch to Enforce once all deployed images are confirmed signed.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-signatures
+spec:
+  validationFailureAction: Audit
+  background: false
+  rules:
+    - name: verify-falco-image
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      verifyImages:
+        - imageReferences:
+            - "docker.io/falcosecurity/*"
+            - "falcosecurity/*"
+          attestors:
+            - entries:
+                - keyless:
+                    subject: "https://github.com/falcosecurity/*"
+                    issuer: "https://token.actions.githubusercontent.com"
+                    rekor:
+                      url: https://rekor.sigstore.dev
