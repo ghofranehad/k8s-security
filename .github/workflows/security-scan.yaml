@@ -64,3 +64,40 @@ jobs:
            severity: 'HIGH,CRITICAL'
            exit-code: '1'
            skip-files: 'tests/violations'
+
+  supply-chain:
+    name: Supply Chain Security
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write  # Required for Cosign keyless verification
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Generate SBOM in CycloneDX format — full inventory of packages,
+      # licenses and CVE surface for every dependency inside the image.
+      - name: Generate SBOM
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: 'falcosecurity/falco'
+          format: 'cyclonedx'
+          output: 'sbom.cdx.json'
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-falco
+          path: sbom.cdx.json
+
+      # Verify Falco image was signed by the falcosecurity GitHub Actions
+      # pipeline via Sigstore keyless signing — proves the image was built
+      # from the official source and not tampered with after publication.
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Verify Falco image signature
+        run: |
+          cosign verify falcosecurity/falco:latest \
+            --certificate-identity-regexp="https://github.com/falcosecurity/.*" \
+            --certificate-oidc-issuer="https://token.actions.githubusercontent.com"
