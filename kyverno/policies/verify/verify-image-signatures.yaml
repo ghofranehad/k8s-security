@@ -27,6 +27,7 @@ spec:
         - imageReferences:
             - "docker.io/falcosecurity/*"
             - "falcosecurity/*"
+          mutateDigest: false
           attestors:
             - entries:
                 - keyless:
