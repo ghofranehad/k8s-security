@@ -1,6 +1,6 @@
 # k8s-security
 
-A production-grade Kubernetes security hardening project demonstrating defense-in-depth across 8 security layers. All layers are deployed and managed via GitOps with ArgoCD. Built to run locally on [Kind](https://kind.sigs.k8s.io/) — no cloud account required.
+A production-grade Kubernetes security hardening project demonstrating defense-in-depth across 7 security layers. All layers are deployed and managed via GitOps with ArgoCD. Built to run locally on [Kind](https://kind.sigs.k8s.io/) — no cloud account required.
 
 > This is not a tutorial. It is a working security system that real teams could adapt to protect their clusters.
 
